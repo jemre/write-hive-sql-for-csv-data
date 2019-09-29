@@ -1,20 +1,40 @@
 from glob import glob
 
-
 def get_table_name(csv): return csv.split('.')[0]
-
 
 def get_headers(csv_file): return csv_file.readline().strip().split(',')
 
-
 def get_sql_filename(csv): return 'create_' + get_table_name(csv) + '_table_load_data.sql'
-
 
 def add_drop_table(sql_file, table_name): sql_file.write('DROP TABLE {}; \n\n'.format(table_name))
 
-
 def add_create_table(sql_file, table_name): sql_file.write('CREATE TABLE IF NOT EXISTS {}; \n'.format(table_name))
 
+def get_header_type(header):
+    return 'string'
+
+def get_line_ending(index, header_length):
+    if index + 1 == header_length:
+        return ''
+    else:
+        return ','
+
+def add_headers(sql_file, headers):
+    header_length = len(headers)
+    for index in range(header_length):
+        sql_file.write(headers[index] + ' ' + get_header_type(headers[index]) + get_line_ending(index, header_length) + '\n')
+
+def add_footer(sql_file):
+    sql_file.write('ROW FORMAT DELIMITED\n')
+    sql_file.write("FIELDS TERMINATED BY ','\n")
+    sql_file.write("LINES TERMINATED BY '\\n'\n")
+    sql_file.write('STORED AS TEXTFILE\n')
+    sql_file.write('tblproperties ("skip.header.line.count"="1");')
+    sql_file.write('\n\n')
+
+def add_load_data(sql_file, table_name):
+    sql_file.write("Load data local inpath '{}.csv' into table {};".format(table_name, table_name))
+    sql_file.write('\n\n')
 
 def parse_csv():
     print('Getting all of the CSV files')
@@ -37,12 +57,18 @@ def parse_csv():
 
         add_drop_table(sql_file, table_name)
         add_create_table(sql_file, table_name)
+        sql_file.write('(\n')
+        add_headers(sql_file, headers)
+        sql_file.write(')\n')
+        add_footer(sql_file)
+        add_load_data(sql_file, table_name)
 
         csv_file.close()
         sql_file.close()
 
     for filename in sql_filename_list:
         pass
+
 
 if __name__ == '__main__':
     parse_csv()
