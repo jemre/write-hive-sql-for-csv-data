@@ -96,11 +96,31 @@ def parse_csv():
         print('parsed {}!'.format(csv))
 
     # Run all the sql statements...
-    for filename in sql_filename_list:
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        print('running sql for: {}'.format(filename))
-        os.system('hive -f {}'.format(filename))
+    # for filename in sql_filename_list:
+    #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+    #     print('running sql for: {}'.format(filename))
+    #     os.system('hive -f {}'.format(filename))
+
+def run_query_one():
+    print('Running Query One.....')
+
+    sql = '''
+    SELECT county_name, count(fatalities) as count
+    FROM crash_location
+    GROUP BY county_Name
+    HAVING county_name != 'NULL'
+    AND TRIM(county_name) != ''
+    ORDER BY count desc
+    LIMIT 10;
+    '''
+
+    sql_file = open('query_one.sql', 'w')
+    sql_file.write(sql)
+    sql_file.close()
+
+    os.system('hive -f query_one.sql > query_one_results.csv')
 
 
 if __name__ == '__main__':
     parse_csv()
+    run_query_one()
