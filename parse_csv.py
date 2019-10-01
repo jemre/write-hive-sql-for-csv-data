@@ -96,10 +96,10 @@ def parse_csv():
         print('parsed {}!'.format(csv))
 
     # Run all the sql statements...
-    # for filename in sql_filename_list:
-    #     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    #     print('running sql for: {}'.format(filename))
-    #     os.system('hive -f {}'.format(filename))
+    for filename in sql_filename_list:
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print('running sql for: {}'.format(filename))
+        os.system('hive -f {}'.format(filename))
 
 def run_query_one():
     print('Running Query One.....')
